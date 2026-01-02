@@ -449,6 +449,12 @@ class Operator(BenchmarkOperator):
         else:
             return lambda: compiled_decompose_k(a, b)
 
+    @register_benchmark(enabled=HAS_TILELANG and is_cu130())
+    def tilelang_matmul(self, a, b, bias) -> Callable:
+        assert bias is None, "Tilelang does not support bias"
+        # assert a.dtype == torch.bfloat16, "Tilelang only supports bf16"
+        return tilelang_matmul_func(a, b)
+    
     if IS_BLACKWELL:
 
         @register_benchmark(enabled=False)
